@@ -109,7 +109,40 @@
                 </form>
                 <br>
                 
-                <button type="button" >Add Assets</button>
+                <button class="btn btn-light btn-sm mb-3" type="button" data-bs-toggle="collapse" data-bs-target="#assetsform" aria-expanded="false" aria-controls="assetsform">
+                        Add Assets
+                      </button>
+                
+              
+                      <div class="collapse" id="assetsform">
+                        <form id="addAssetsForm">
+                          <div class="mb-2">
+                            <label for="companyName" class="form-label">Name</label>
+                            <input type="text" class="form-control" id="assetName" name="name" placeholder="Enter name" required>
+                          </div>
+                          <div class="mb-2">
+                            <label for="discription" class="form-label">Discription</label>
+                            <input type="text" class="form-control" id="discription" name="discription" placeholder="Description" required>
+                          </div>
+                          <div class="mb-2">
+                            <label for="date" class="form-label">Purchase Date</label>
+                            <input type="date" class="form-control" id="date" name="date" placeholder="date" required>
+                          </div>
+                          <div class="mb-2">
+                            <label for="roomorlabid" class="form-label">Room ID/Lab ID</label>
+                            <input type="text" class="form-control" id="contractStart" name="roomlabid" required>
+                          </div>
+                          <div class="mb-2">
+                            <label for="wastetype" class="form-label">Waste Type ID</label>
+                            <input type="text" class="form-control" id="wastetype" name="contract_end" required>
+                          </div>
+                          <button type="submit" class="btn btn-light btn-sm mt-2">Submit</button>
+                        </form>
+                      </div>
+                
+
+
+
               </div>
             </div>
           </div>
