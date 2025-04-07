@@ -1,31 +1,364 @@
-  <!-- Sidebar -->
-  <nav class="col-md-2 d-none d-md-block sidebar">
-    <h4 class="text-center py-3">Company Panel</h4>
-    <a href="#" class="active">Dashboard</a>
-    <a href="#">Reports</a>
-    <a href="#" id="logoutBtn">Logout</a>
-  </nav>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Company Dashboard</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    .sidebar {
+      height: 100vh;
+      background-color: #343a40;
+      color: white;
+    }
+    .sidebar a {
+      color: #adb5bd;
+      text-decoration: none;
+      display: block;
+      padding: 10px 20px;
+    }
+    .sidebar a:hover, .sidebar .active {
+      background-color: #495057;
+      color: #fff;
+    }
+    .content {
+      padding: 20px;
+    }
+    .navbar {
+      background-color: #ffffff;
+      border-bottom: 1px solid #dee2e6;
+    }
+    .suggestion-box {
+      display: none;
+      margin-top: 10px;
+      padding: 10px;
+      background-color: #f8f9fa;
+      border-radius: 5px;
+    }
+    .action-buttons {
+      display: flex;
+      gap: 5px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container-fluid">
+    <div class="row">
+      
+      <!-- Sidebar -->
+      <nav class="col-md-2 d-none d-md-block sidebar">
+        <h4 class="text-center py-3">Company Panel</h4>
+        <a href="/company" class="active">Dashboard</a>
+        <a href="/company/reports">Reports</a>
+        <a href="#" id="logoutBtn">Logout</a>
+      </nav>
+
+      <!-- Main Content -->
+      <main class="col-md-10 ms-sm-auto col-lg-10 px-md-4">
+        <!-- Top Navbar -->
+        <nav class="navbar navbar-light sticky-top flex-md-nowrap p-3 mb-4">
+          <span class="navbar-brand mb-0 h1">Dashboard</span>
+        </nav>
+
+        <!-- Dashboard Cards -->
+        <div class="row g-4">
+          <!-- Pending Tasks Card -->
+          <div class="col-md-4">
+            <div class="card text-bg-warning shadow-sm">
+              <div class="card-body">
+                <h5 class="card-title">Pending Tasks</h5>
+                <button class="btn btn-light btn-sm mb-3" type="button" id="showPendingTasksBtn">
+                  Show Pending Tasks
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Completed Tasks Card -->
+          <div class="col-md-4">
+            <div class="card text-bg-success shadow-sm">
+              <div class="card-body">
+                <h5 class="card-title">Completed Tasks</h5>
+                <button class="btn btn-light btn-sm mb-3" type="button" id="showCompletedTasksBtn">
+                  Show Completed Tasks
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Reports Card -->
+          <div class="col-md-4">
+            <div class="card text-bg-info shadow-sm">
+              <div class="card-body">
+                <h5 class="card-title">Reports</h5>
+                <button class="btn btn-light btn-sm mb-3" type="button" id="generateReportBtn">
+                  Generate Report
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tasks Tables -->
+        <div class="mt-5">
+          <!-- Pending Tasks Table -->
+          <div id="pendingTasksTable" class="mb-4" style="display: none;">
+            <h4>Pending Tasks</h4>
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Request ID</th>
+                  <th>Department</th>
+                  <th>Description</th>
+                  <th>Actions</th>
+                  <th>Date</th>
+                </tr>
+              </thead>
+              <tbody id="pendingTasksList">
+                <!-- Tasks will be populated here -->
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Completed Tasks Table -->
+          <div id="completedTasksTable" class="mb-4" style="display: none;">
+            <h4>Completed Tasks</h4>
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Request ID</th>
+                  <th>Department</th>
+                  <th>Description</th>
+                  <th>Completion Date</th>
+                </tr>
+              </thead>
+              <tbody id="completedTasksList">
+                <!-- Tasks will be populated here -->
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Recent Activity -->
+          <h4>Recent Activity</h4>
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Request ID</th>
+                <th>Department</th>
+                <th>Status</th>
+                <th>Date</th>
+              </tr>
+            </thead>
+            <tbody id="recentActivityList">
+              <!-- Activity will be populated here -->
+            </tbody>
+          </table>
+        </div>
+      </main>
+    </div>
+  </div>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
   <script>
+    // Logout functionality
     document.getElementById('logoutBtn').addEventListener('click', async (e) => {
       e.preventDefault();
+      if (confirm('Are you sure you want to logout?')) {
+        try {
+          const response = await fetch('/api/auth/logout', {
+            method: 'POST',
+            credentials: 'include'
+          });
+          
+          if (response.ok) {
+            window.location.href = '/';
+          } else {
+            alert('Logout failed. Please try again.');
+          }
+        } catch (error) {
+          console.error('Logout error:', error);
+          alert('An error occurred during logout. Please try again.');
+        }
+      }
+    });
+
+    // Show/Hide Pending Tasks
+    document.getElementById('showPendingTasksBtn').addEventListener('click', function() {
+      const pendingTasksTable = document.getElementById('pendingTasksTable');
+      const showBtn = document.getElementById('showPendingTasksBtn');
+      
+      if (pendingTasksTable.style.display === 'none') {
+        fetchPendingTasks();
+        showBtn.textContent = 'Hide Pending Tasks';
+      } else {
+        pendingTasksTable.style.display = 'none';
+        showBtn.textContent = 'Show Pending Tasks';
+      }
+    });
+
+    // Show/Hide Completed Tasks
+    document.getElementById('showCompletedTasksBtn').addEventListener('click', function() {
+      const completedTasksTable = document.getElementById('completedTasksTable');
+      const showBtn = document.getElementById('showCompletedTasksBtn');
+      
+      if (completedTasksTable.style.display === 'none') {
+        fetchCompletedTasks();
+        showBtn.textContent = 'Hide Completed Tasks';
+      } else {
+        completedTasksTable.style.display = 'none';
+        showBtn.textContent = 'Show Completed Tasks';
+      }
+    });
+
+    // Generate Report
+    document.getElementById('generateReportBtn').addEventListener('click', function() {
+      // TODO: Implement report generation
+      alert('Report generation feature will be implemented soon!');
+    });
+
+    // Function to fetch pending tasks
+    async function fetchPendingTasks() {
       try {
-        const response = await fetch('/api/auth/logout', {
+        const response = await fetch('/api/tasks/pending', {
+          credentials: 'include'
+        });
+        
+        if (response.ok) {
+          const tasks = await response.json();
+          const tasksList = document.getElementById('pendingTasksList');
+          const tasksTable = document.getElementById('pendingTasksTable');
+          
+          tasksList.innerHTML = '';
+          tasks.forEach(task => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+              <td>${task.id}</td>
+              <td>${task.request_id}</td>
+              <td>${task.department}</td>
+              <td>${task.description}</td>
+              <td class="action-buttons">
+                <button class="btn btn-success btn-sm" onclick="handleTaskAction(${task.id}, 'accept')">Accept</button>
+                <button class="btn btn-danger btn-sm" onclick="handleTaskAction(${task.id}, 'reject')">Reject</button>
+                <button class="btn btn-secondary btn-sm" onclick="toggleReplyBox(${task.id})">Reply</button>
+                <div class="suggestion-box" id="suggestion-box-${task.id}">
+                  <textarea class="form-control" placeholder="Type your reply here..."></textarea>
+                  <button class="btn btn-primary btn-sm mt-2" onclick="submitReply(${task.id})">Submit Reply</button>
+                </div>
+              </td>
+              <td>${new Date(task.date).toLocaleDateString()}</td>
+            `;
+            tasksList.appendChild(row);
+          });
+          
+          tasksTable.style.display = 'block';
+        } else {
+          alert('Failed to fetch pending tasks');
+        }
+      } catch (error) {
+        console.error('Fetch pending tasks error:', error);
+        alert('An error occurred while fetching pending tasks');
+      }
+    }
+
+    // Function to fetch completed tasks
+    async function fetchCompletedTasks() {
+      try {
+        const response = await fetch('/api/tasks/completed', {
+          credentials: 'include'
+        });
+        
+        if (response.ok) {
+          const tasks = await response.json();
+          const tasksList = document.getElementById('completedTasksList');
+          const tasksTable = document.getElementById('completedTasksTable');
+          
+          tasksList.innerHTML = '';
+          tasks.forEach(task => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+              <td>${task.id}</td>
+              <td>${task.request_id}</td>
+              <td>${task.department}</td>
+              <td>${task.description}</td>
+              <td>${new Date(task.completion_date).toLocaleDateString()}</td>
+            `;
+            tasksList.appendChild(row);
+          });
+          
+          tasksTable.style.display = 'block';
+        } else {
+          alert('Failed to fetch completed tasks');
+        }
+      } catch (error) {
+        console.error('Fetch completed tasks error:', error);
+        alert('An error occurred while fetching completed tasks');
+      }
+    }
+
+    // Function to handle task actions (accept/reject)
+    async function handleTaskAction(taskId, action) {
+      try {
+        const response = await fetch(`/api/tasks/${taskId}/${action}`, {
           method: 'POST',
           credentials: 'include'
         });
         
         if (response.ok) {
-          window.location.href = '/';
+          alert(`Task ${action}ed successfully!`);
+          fetchPendingTasks();
         } else {
-          alert('Logout failed. Please try again.');
+          alert(`Failed to ${action} task`);
         }
       } catch (error) {
-        console.error('Logout error:', error);
-        alert('An error occurred during logout. Please try again.');
+        console.error(`${action} task error:`, error);
+        alert(`An error occurred while ${action}ing the task`);
       }
-    });
+    }
+
+    // Function to toggle reply box
+    function toggleReplyBox(taskId) {
+      const suggestionBox = document.getElementById(`suggestion-box-${taskId}`);
+      suggestionBox.style.display = suggestionBox.style.display === 'block' ? 'none' : 'block';
+    }
+
+    // Function to submit reply
+    async function submitReply(taskId) {
+      const textarea = document.querySelector(`#suggestion-box-${taskId} textarea`);
+      const reply = textarea.value.trim();
+      
+      if (!reply) {
+        alert('Please enter a reply');
+        return;
+      }
+
+      try {
+        const response = await fetch(`/api/tasks/${taskId}/reply`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          credentials: 'include',
+          body: JSON.stringify({ reply })
+        });
+        
+        if (response.ok) {
+          alert('Reply submitted successfully!');
+          textarea.value = '';
+          toggleReplyBox(taskId);
+        } else {
+          alert('Failed to submit reply');
+        }
+      } catch (error) {
+        console.error('Submit reply error:', error);
+        alert('An error occurred while submitting the reply');
+      }
+    }
   </script>
 </body>
-</html> 
+</html>

@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Company Reports</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    .sidebar {
+      height: 100vh;
+      background-color: #343a40;
+      color: white;
+    }
+    .sidebar a {
+      color: #adb5bd;
+      text-decoration: none;
+      display: block;
+      padding: 10px 20px;
+    }
+    .sidebar a:hover, .sidebar .active {
+      background-color: #495057;
+      color: #fff;
+    }
+    .content {
+      padding: 20px;
+    }
+    .navbar {
+      background-color: #ffffff;
+      border-bottom: 1px solid #dee2e6;
+    }
+  </style>
+</head>
+<body>
+  <div class="container-fluid">
+    <div class="row">
+      
+      <!-- Sidebar -->
+      <nav class="col-md-2 d-none d-md-block sidebar">
+        <h4 class="text-center py-3">Company Panel</h4>
+        <a href="/company">Dashboard</a>
+        <a href="/company/reports" class="active">Reports</a>
+        <a href="#" id="logoutBtn">Logout</a>
+      </nav>
+
+      <!-- Main Content -->
+      <main class="col-md-10 ms-sm-auto col-lg-10 px-md-4">
+        <!-- Top Navbar -->
+        <nav class="navbar navbar-light sticky-top flex-md-nowrap p-3 mb-4">
+          <span class="navbar-brand mb-0 h1">Reports</span>
+        </nav>
+
+        <!-- Reports Content -->
+        <div class="row g-4">
+          <!-- Monthly Report Card -->
+          <div class="col-md-6">
+            <div class="card text-bg-primary shadow-sm">
+              <div class="card-body">
+                <h5 class="card-title">Monthly Report</h5>
+                <button class="btn btn-light btn-sm mb-3" type="button" id="generateMonthlyReportBtn">
+                  Generate Monthly Report
+                </button>
+                <div id="monthlyReportTable" style="display: none;">
+                  <table class="table table-striped">
+                    <thead>
+                      <tr>
+                        <th>Month</th>
+                        <th>Total Tasks</th>
+                        <th>Completed</th>
+                        <th>Pending</th>
+                      </tr>
+                    </thead>
+                    <tbody id="monthlyReportList">
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Department-wise Report Card -->
+          <div class="col-md-6">
+            <div class="card text-bg-success shadow-sm">
+              <div class="card-body">
+                <h5 class="card-title">Department-wise Report</h5>
+                <button class="btn btn-light btn-sm mb-3" type="button" id="generateDeptReportBtn">
+                  Generate Department Report
+                </button>
+                <div id="deptReportTable" style="display: none;">
+                  <table class="table table-striped">
+                    <thead>
+                      <tr>
+                        <th>Department</th>
+                        <th>Total Tasks</th>
+                        <th>Completed</th>
+                        <th>Pending</th>
+                      </tr>
+                    </thead>
+                    <tbody id="deptReportList">
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // Logout functionality
+    document.getElementById('logoutBtn').addEventListener('click', async (e) => {
+      e.preventDefault();
+      if (confirm('Are you sure you want to logout?')) {
+        try {
+          const response = await fetch('/api/auth/logout', {
+            method: 'POST',
+            credentials: 'include'
+          });
+          
+          if (response.ok) {
+            window.location.href = '/';
+          } else {
+            alert('Logout failed. Please try again.');
+          }
+        } catch (error) {
+          console.error('Logout error:', error);
+          alert('An error occurred during logout. Please try again.');
+        }
+      }
+    });
+
+    // Generate Monthly Report
+    document.getElementById('generateMonthlyReportBtn').addEventListener('click', async function() {
+      try {
+        const response = await fetch('/api/reports/monthly', {
+          credentials: 'include'
+        });
+        
+        if (response.ok) {
+          const report = await response.json();
+          const reportList = document.getElementById('monthlyReportList');
+          const reportTable = document.getElementById('monthlyReportTable');
+          
+          reportList.innerHTML = '';
+          report.forEach(item => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+              <td>${item.month}</td>
+              <td>${item.total_tasks}</td>
+              <td>${item.completed}</td>
+              <td>${item.pending}</td>
+            `;
+            reportList.appendChild(row);
+          });
+          
+          reportTable.style.display = 'block';
+        } else {
+          alert('Failed to generate monthly report');
+        }
+      } catch (error) {
+        console.error('Generate monthly report error:', error);
+        alert('An error occurred while generating the monthly report');
+      }
+    });
+
+    // Generate Department Report
+    document.getElementById('generateDeptReportBtn').addEventListener('click', async function() {
+      try {
+        const response = await fetch('/api/reports/department', {
+          credentials: 'include'
+        });
+        
+        if (response.ok) {
+          const report = await response.json();
+          const reportList = document.getElementById('deptReportList');
+          const reportTable = document.getElementById('deptReportTable');
+          
+          reportList.innerHTML = '';
+          report.forEach(item => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+              <td>${item.department}</td>
+              <td>${item.total_tasks}</td>
+              <td>${item.completed}</td>
+              <td>${item.pending}</td>
+            `;
+            reportList.appendChild(row);
+          });
+          
+          reportTable.style.display = 'block';
+        } else {
+          alert('Failed to generate department report');
+        }
+      } catch (error) {
+        console.error('Generate department report error:', error);
+        alert('An error occurred while generating the department report');
+      }
+    });
+  </script>
+</body>
+</html> 

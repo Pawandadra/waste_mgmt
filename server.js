@@ -76,6 +76,21 @@ app.get('/admin-route', authMiddleware.isAdmin, (req, res) => {
     res.json({ message: 'This is an admin route' });
 });
 
+// Company routes
+app.get('/company', authMiddleware.isAuthenticated, (req, res) => {
+    if (req.session.user.role !== 'company') {
+        return res.redirect('/');
+    }
+    res.sendFile(path.join(__dirname, 'templates', 'company.html'));
+});
+
+app.get('/company/reports', authMiddleware.isAuthenticated, (req, res) => {
+    if (req.session.user.role !== 'company') {
+        return res.redirect('/');
+    }
+    res.sendFile(path.join(__dirname, 'templates', 'company_reports.html'));
+});
+
 // Start server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
