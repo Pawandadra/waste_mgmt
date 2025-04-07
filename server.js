@@ -6,6 +6,7 @@ const path = require('path');
 require('dotenv').config();
 const db = require('./config/db');
 const authRoutes = require('./routes/auth');
+const companyRoutes = require('./routes/company');
 const authMiddleware = require('./middleware/auth');
 
 const app = express();
@@ -45,6 +46,7 @@ app.use(session({
 
 // Routes
 app.use('/api/auth', authRoutes);
+app.use('/api/company', companyRoutes);
 
 // Serve login page
 app.get('/', (req, res) => {

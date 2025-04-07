@@ -42,7 +42,7 @@
         <h4 class="text-center py-3">Admin Panel</h4>
         <a href="#" class="active">Dashboard</a>
         <a href="#">Reports</a>
-        <a href="#">Logout</a>
+        <a href="#" id="logoutBtn">Logout</a>
       </nav>
 
       <!-- Main Content -->
@@ -70,31 +70,51 @@
                 <button class="btn btn-light btn-sm mb-3" type="button" data-bs-toggle="collapse" data-bs-target="#companyForm" aria-expanded="false" aria-controls="companyForm">
                   Add Company
                 </button>
+                <button class="btn btn-light btn-sm mb-3" type="button" id="showCompaniesBtn">
+                  Show Companies
+                </button>
         
                 <div class="collapse" id="companyForm">
-                  <form>
+                  <form id="addCompanyForm">
                     <div class="mb-2">
                       <label for="companyName" class="form-label">Company Name</label>
-                      <input type="text" class="form-control" id="companyName" placeholder="Enter name" required>
+                      <input type="text" class="form-control" id="companyName" name="name" placeholder="Enter name" required>
                     </div>
                     <div class="mb-2">
                       <label for="email" class="form-label">Email</label>
-                      <input type="email" class="form-control" id="email" placeholder="Enter email" required>
+                      <input type="email" class="form-control" id="email" name="email" placeholder="Enter email" required>
                     </div>
                     <div class="mb-2">
                       <label for="phone" class="form-label">Phone Number</label>
-                      <input type="tel" class="form-control" id="phone" placeholder="Enter phone number" required>
+                      <input type="tel" class="form-control" id="phone" name="phone_no" placeholder="Enter phone number" required>
                     </div>
                     <div class="mb-2">
                       <label for="contractStart" class="form-label">Contract Start</label>
-                      <input type="date" class="form-control" id="contractStart" required>
+                      <input type="date" class="form-control" id="contractStart" name="contract_start" required>
                     </div>
                     <div class="mb-2">
                       <label for="contractEnd" class="form-label">Contract End</label>
-                      <input type="date" class="form-control" id="contractEnd" required>
+                      <input type="date" class="form-control" id="contractEnd" name="contract_end" required>
                     </div>
                     <button type="submit" class="btn btn-light btn-sm mt-2">Submit</button>
                   </form>
+                </div>
+
+                <!-- Companies Table -->
+                <div id="companiesTable" class="mt-3" style="display: none;">
+                  <table class="table table-striped">
+                    <thead>
+                      <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>Contract Start</th>
+                        <th>Contract End</th>
+                      </tr>
+                    </thead>
+                    <tbody id="companiesList">
+                    </tbody>
+                  </table>
                 </div>
               </div>
             </div>
@@ -134,5 +154,92 @@
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    document.getElementById('logoutBtn').addEventListener('click', async (e) => {
+      e.preventDefault();
+      try {
+        const response = await fetch('/api/auth/logout', {
+          method: 'POST',
+          credentials: 'include'
+        });
+        
+        if (response.ok) {
+          window.location.href = '/';
+        } else {
+          alert('Logout failed. Please try again.');
+        }
+      } catch (error) {
+        console.error('Logout error:', error);
+        alert('An error occurred during logout. Please try again.');
+      }
+    });
+
+    document.getElementById('addCompanyForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      try {
+        const formData = new FormData(e.target);
+        const data = Object.fromEntries(formData.entries());
+        
+        const response = await fetch('/api/company/add', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          credentials: 'include',
+          body: JSON.stringify(data)
+        });
+
+        const result = await response.json();
+        
+        if (response.ok) {
+          alert('Company added successfully!');
+          e.target.reset();
+          document.getElementById('companyForm').classList.remove('show');
+          fetchCompanies();
+        } else {
+          alert(result.error || 'Failed to add company');
+        }
+      } catch (error) {
+        console.error('Add company error:', error);
+        alert('An error occurred while adding the company');
+      }
+    });
+
+    document.getElementById('showCompaniesBtn').addEventListener('click', fetchCompanies);
+
+    async function fetchCompanies() {
+      try {
+        const response = await fetch('/api/company/all', {
+          credentials: 'include'
+        });
+        
+        if (response.ok) {
+          const companies = await response.json();
+          const companiesList = document.getElementById('companiesList');
+          const companiesTable = document.getElementById('companiesTable');
+          
+          companiesList.innerHTML = '';
+          companies.forEach(company => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+              <td>${company.name}</td>
+              <td>${company.email}</td>
+              <td>${company.phone_no}</td>
+              <td>${new Date(company.contract_start).toLocaleDateString()}</td>
+              <td>${new Date(company.contract_end).toLocaleDateString()}</td>
+            `;
+            companiesList.appendChild(row);
+          });
+          
+          companiesTable.style.display = 'block';
+        } else {
+          alert('Failed to fetch companies');
+        }
+      } catch (error) {
+        console.error('Fetch companies error:', error);
+        alert('An error occurred while fetching companies');
+      }
+    }
+  </script>
 </body>
 </html>

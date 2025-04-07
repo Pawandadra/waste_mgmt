@@ -43,10 +43,10 @@ router.post('/login', authMiddleware.verifyLogin, async (req, res) => {
 router.post('/logout', (req, res) => {
     req.session.destroy((err) => {
         if (err) {
-            console.error('Logout error:', err);
-            return res.status(500).json({ error: 'Internal server error' });
+            return res.status(500).json({ error: 'Could not log out, please try again' });
         }
-        res.json({ message: 'Logout successful' });
+        res.clearCookie('session_cookie_name');
+        res.json({ message: 'Logged out successfully' });
     });
 });
 
