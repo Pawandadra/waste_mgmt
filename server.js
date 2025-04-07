@@ -47,7 +47,7 @@ app.use(session({
 app.use('/api/auth', authRoutes);
 
 // Serve login page
-app.get('/login', (req, res) => {
+app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'templates', 'login.html'));
 });
 
@@ -76,5 +76,5 @@ app.get('/admin-route', authMiddleware.isAdmin, (req, res) => {
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
-    console.log(`Login page available at: http://localhost:${PORT}/login`);
+    console.log(`Login page available at: http://localhost:${PORT}`);
 });

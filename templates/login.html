@@ -151,11 +151,11 @@
             // Redirect based on user role
             setTimeout(() => {
               if (data.user.role === 'admin') {
-                window.location.href = '/admin-dashboard.html';
+                window.location.href = 'admin.html';
               } else if (data.user.role === 'department') {
-                window.location.href = '/department-dashboard.html';
+                window.location.href = 'department.html';
               } else if (data.user.role === 'company') {
-                window.location.href = '/company-dashboard.html';
+                window.location.href = 'company.html';
               }
             }, 1000);
           } else {
