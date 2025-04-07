@@ -64,12 +64,30 @@
                 <button class="btn btn-light btn-sm mb-3" type="button" id="showDepartmentsBtn">
                   Show Departments
                 </button>
-                <button class="btn btn-light btn-sm mb-3" type="button" id="showDepartmentsBtn">
+                <button class="btn btn-light btn-sm mb-3" type="button" id="deleteDepartment" data-bs-toggle="collapse" data-bs-target="#deleteDepartment" aria-expanded="false" aria-controls="deleteDepartment">
                   Delete Departments
                 </button>
         
                 <div class="collapse" id="departmentForm">
                   <form id="addDepartmentForm">
+                    <div class="mb-2">
+                      <label for="deptName" class="form-label">Department Name</label>
+                      <input type="text" class="form-control" id="deptName" name="dept_name" placeholder="Enter department name" required>
+                    </div>
+                    <div class="mb-2">
+                      <label for="deptCode" class="form-label">Department Code</label>
+                      <input type="text" class="form-control" id="deptCode" name="dept_code" placeholder="Enter department code" required>
+                    </div>
+                    <div class="mb-2">
+                      <label for="contactInfo" class="form-label">Contact Information</label>
+                      <textarea class="form-control" id="contactInfo" name="contact_info" placeholder="Enter contact information" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-light btn-sm mt-2">Submit</button>
+                  </form>
+                </div>
+
+                <div class="collapse" id="deleteDepartment">
+                  <form id="deleteDepartment">
                     <div class="mb-2">
                       <label for="deptName" class="form-label">Department Name</label>
                       <input type="text" class="form-control" id="deptName" name="dept_name" placeholder="Enter department name" required>
@@ -100,7 +118,7 @@
                 <button class="btn btn-light btn-sm mb-3" type="button" id="showCompaniesBtn">
                   Show Companies
                 </button>
-                <button class="btn btn-light btn-sm mb-3" type="button" data-bs-toggle="collapse" data-bs-target="#companyForm" aria-expanded="false" aria-controls="companyForm">
+                <button class="btn btn-light btn-sm mb-3" type="button" data-bs-toggle="collapse" data-bs-target="#deleteCompany" aria-expanded="false" aria-controls="deleteCompany">
                   Delete Company
                 </button>
         
@@ -126,6 +144,25 @@
                       <label for="contractEnd" class="form-label">Contract End</label>
                       <input type="date" class="form-control" id="contractEnd" name="contract_end" required>
                     </div>
+                    <button type="submit" class="btn btn-light btn-sm mt-2">Submit</button>
+                  </form>
+                </div>
+                
+                <div class="collapse" id="deleteCompany">
+                  <form id="deleteCompany">
+                    <div class="mb-2">
+                      <label for="companyName" class="form-label">Company Name</label>
+                      <input type="text" class="form-control" id="companyName" name="name" placeholder="Enter name" required>
+                    </div>
+                    <div class="mb-2">
+                      <label for="email" class="form-label">Email</label>
+                      <input type="email" class="form-control" id="email" name="email" placeholder="Enter email" required>
+                    </div>
+                    <div class="mb-2">
+                      <label for="phone" class="form-label">Phone Number</label>
+                      <input type="tel" class="form-control" id="phone" name="phone_no" placeholder="Enter phone number" required>
+                    </div>
+                    
                     <button type="submit" class="btn btn-light btn-sm mt-2">Submit</button>
                   </form>
                 </div>
