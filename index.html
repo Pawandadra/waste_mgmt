@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin Dashboard</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    .sidebar {
+      height: 100vh;
+      background-color: #343a40;
+      color: white;
+    }
+    .sidebar a {
+      color: #adb5bd;
+      text-decoration: none;
+      display: block;
+      padding: 10px 20px;
+    }
+    .sidebar a:hover, .sidebar .active {
+      background-color: #495057;
+      color: #fff;
+    }
+    .content {
+      padding: 20px;
+    }
+    .navbar {
+      background-color: #ffffff;
+      border-bottom: 1px solid #dee2e6;
+    }
+  </style>
+</head>
+<body>
+  <div class="container-fluid">
+    <div class="row">
+      
+      <!-- Sidebar -->
+      <nav class="col-md-2 d-none d-md-block sidebar">
+        <h4 class="text-center py-3">Admin Panel</h4>
+        <a href="#" class="active">Dashboard</a>
+        <a href="#">Users</a>
+        <a href="#">Settings</a>
+        <a href="#">Reports</a>
+        <a href="#">Logout</a>
+      </nav>
+
+      <!-- Main Content -->
+      <main class="col-md-10 ms-sm-auto col-lg-10 px-md-4">
+        <!-- Top Navbar -->
+        <nav class="navbar navbar-light sticky-top flex-md-nowrap p-3 mb-4">
+          <span class="navbar-brand mb-0 h1">Dashboard</span>
+        </nav>
+
+        <!-- Dashboard Cards -->
+        <div class="row g-4">
+          <div class="col-md-4">
+            <div class="card text-bg-primary shadow-sm">
+              <div class="card-body">
+                <h5 class="card-title">Departments</h5>
+              </div>
+            </div>
+          </div><div class="col-md-4">
+            <div class="card text-bg-success shadow-sm">
+              <div class="card-body">
+                <h5 class="card-title">Company</h5>
+                <button class="btn btn-light btn-sm mb-3" type="button" data-bs-toggle="collapse" data-bs-target="#companyForm" aria-expanded="false" aria-controls="companyForm">
+                  Add Company
+                </button>
+          
+                <div class="collapse" id="companyForm">
+                  </div>
+                    <div class="collapse" id="companyForm">
+                      <form>
+                        <div class="mb-2">
+                          <label for="companyName" class="form-label">Company Name</label>
+                          <input type="text" class="form-control" id="companyName" placeholder="Enter name" required>
+                        </div>
+                        <div class="mb-2">
+                          <label for="email" class="form-label">Email</label>
+                          <input type="email" class="form-control" id="email" placeholder="Enter email" required>
+                        </div>
+                        <div class="mb-2">
+                          <label for="phone" class="form-label">Phone Number</label>
+                          <input type="tel" class="form-control" id="phone" placeholder="Enter phone number" required>
+                        </div>
+                        <div class="mb-2">
+                          <label for="contractStart" class="form-label">Contract Start</label>
+                          <input type="date" class="form-control" id="contractStart" required>
+                        </div>
+                        <div class="mb-2">
+                          <label for="contractEnd" class="form-label">Contract End</label>
+                          <input type="date" class="form-control" id="contractEnd" required>
+                        </div>
+                        <button type="submit" class="btn btn-light btn-sm mt-2">Submit</button>
+                      </form>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+           <div class="col-md-4">
+            <div class="card text-bg-warning shadow-sm">
+              <div class="card-body">
+                <h5 class="card-title">Pending Tasks</h5>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- More Content -->
+        <div class="mt-5">
+          <h4>Recent Activity</h4>
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>User</th>
+                <th>Action</th>
+                <th>Date</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>1</td>
+              </tr>
+              <!-- Add more rows as needed -->
+            </tbody>
+          </table>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
