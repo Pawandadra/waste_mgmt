@@ -58,6 +58,30 @@
             <div class="card text-bg-primary shadow-sm">
               <div class="card-body">
                 <h5 class="card-title">Departments</h5>
+                <button class="btn btn-light btn-sm mb-3" type="button" data-bs-toggle="collapse" data-bs-target="#departmentForm" aria-expanded="false" aria-controls="departmentForm">
+                  Add Department
+                </button>
+                <button class="btn btn-light btn-sm mb-3" type="button" id="showDepartmentsBtn">
+                  Show Departments
+                </button>
+        
+                <div class="collapse" id="departmentForm">
+                  <form id="addDepartmentForm">
+                    <div class="mb-2">
+                      <label for="deptName" class="form-label">Department Name</label>
+                      <input type="text" class="form-control" id="deptName" name="dept_name" placeholder="Enter department name" required>
+                    </div>
+                    <div class="mb-2">
+                      <label for="deptCode" class="form-label">Department Code</label>
+                      <input type="text" class="form-control" id="deptCode" name="dept_code" placeholder="Enter department code" required>
+                    </div>
+                    <div class="mb-2">
+                      <label for="contactInfo" class="form-label">Contact Information</label>
+                      <textarea class="form-control" id="contactInfo" name="contact_info" placeholder="Enter contact information" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-light btn-sm mt-2">Submit</button>
+                  </form>
+                </div>
               </div>
             </div>
           </div>
@@ -99,23 +123,6 @@
                     <button type="submit" class="btn btn-light btn-sm mt-2">Submit</button>
                   </form>
                 </div>
-
-                <!-- Companies Table -->
-                <div id="companiesTable" class="mt-3" style="display: none;">
-                  <table class="table table-striped">
-                    <thead>
-                      <tr>
-                        <th>Name</th>
-                        <th>Email</th>
-                        <th>Phone</th>
-                        <th>Contract Start</th>
-                        <th>Contract End</th>
-                      </tr>
-                    </thead>
-                    <tbody id="companiesList">
-                    </tbody>
-                  </table>
-                </div>
               </div>
             </div>
           </div>
@@ -131,6 +138,40 @@
         </div>
         <!-- More Content -->
         <div class="mt-5">
+          <!-- Companies Table -->
+          <div id="companiesTable" class="mb-4" style="display: none;">
+            <h4>Companies</h4>
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Email</th>
+                  <th>Phone</th>
+                  <th>Contract Start</th>
+                  <th>Contract End</th>
+                </tr>
+              </thead>
+              <tbody id="companiesList">
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Departments Table -->
+          <div id="departmentsTable" class="mb-4" style="display: none;">
+            <h4>Departments</h4>
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Code</th>
+                  <th>Contact Information</th>
+                </tr>
+              </thead>
+              <tbody id="departmentsList">
+              </tbody>
+            </table>
+          </div>
+
           <h4>Recent Activity</h4>
           <table class="table table-striped">
             <thead>
@@ -205,7 +246,18 @@
       }
     });
 
-    document.getElementById('showCompaniesBtn').addEventListener('click', fetchCompanies);
+    document.getElementById('showCompaniesBtn').addEventListener('click', function() {
+      const companiesTable = document.getElementById('companiesTable');
+      const showBtn = document.getElementById('showCompaniesBtn');
+      
+      if (companiesTable.style.display === 'none') {
+        fetchCompanies();
+        showBtn.textContent = 'Hide Companies';
+      } else {
+        companiesTable.style.display = 'none';
+        showBtn.textContent = 'Show Companies';
+      }
+    });
 
     async function fetchCompanies() {
       try {
@@ -238,6 +290,84 @@
       } catch (error) {
         console.error('Fetch companies error:', error);
         alert('An error occurred while fetching companies');
+      }
+    }
+
+    // Add Department functionality
+    document.getElementById('addDepartmentForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      try {
+        const formData = new FormData(e.target);
+        const data = Object.fromEntries(formData.entries());
+        
+        const response = await fetch('/api/department/add', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          credentials: 'include',
+          body: JSON.stringify(data)
+        });
+
+        const result = await response.json();
+        
+        if (response.ok) {
+          alert('Department added successfully!');
+          e.target.reset();
+          document.getElementById('departmentForm').classList.remove('show');
+          fetchDepartments();
+        } else {
+          alert(result.error || 'Failed to add department');
+        }
+      } catch (error) {
+        console.error('Add department error:', error);
+        alert('An error occurred while adding the department');
+      }
+    });
+
+    // Show Departments functionality
+    document.getElementById('showDepartmentsBtn').addEventListener('click', function() {
+      const departmentsTable = document.getElementById('departmentsTable');
+      const showBtn = document.getElementById('showDepartmentsBtn');
+      
+      if (departmentsTable.style.display === 'none') {
+        fetchDepartments();
+        showBtn.textContent = 'Hide Departments';
+      } else {
+        departmentsTable.style.display = 'none';
+        showBtn.textContent = 'Show Departments';
+      }
+    });
+
+    async function fetchDepartments() {
+      try {
+        const response = await fetch('/api/department/all', {
+          credentials: 'include'
+        });
+        
+        if (response.ok) {
+          const departments = await response.json();
+          const departmentsList = document.getElementById('departmentsList');
+          const departmentsTable = document.getElementById('departmentsTable');
+          
+          departmentsList.innerHTML = '';
+          departments.forEach(department => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+              <td>${department.dept_name}</td>
+              <td>${department.dept_code}</td>
+              <td>${department.contact_info}</td>
+            `;
+            departmentsList.appendChild(row);
+          });
+          
+          departmentsTable.style.display = 'block';
+        } else {
+          alert('Failed to fetch departments');
+        }
+      } catch (error) {
+        console.error('Fetch departments error:', error);
+        alert('An error occurred while fetching departments');
       }
     }
   </script>
